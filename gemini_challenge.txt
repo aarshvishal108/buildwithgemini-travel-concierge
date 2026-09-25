@@ -1,0 +1,84 @@
+===============================================================================
+               BUILD WITH GEMINI CHALLENGE — PROJECT SUMMARY
+                       Wanderlust Travel & Concierge
+===============================================================================
+
+-------------------------------------------------------------------------------
+1. OVERVIEW & PROJECT DETAILS
+-------------------------------------------------------------------------------
+Project Name : Wanderlust — Travel & Itinerary Concierge
+Framework    : Google Agent Development Kit (ADK 1.1.0)
+Deployment   : Agent Runtime (Vertex AI Reasoning Engine) & Cloud Run Frontend
+GitHub Repo  : https://github.com/aarshvishal108/buildwithgemini-travel-concierge
+Owner        : aarshvishal108 (Exclusive write/edit permissions)
+
+Wanderlust is a personal AI travel concierge agent built using Google's Agent
+Development Kit (ADK). It helps travelers discover custom destinations, plan
+daily itineraries, calculate travel budgets, check live weather, and generate
+personalized generative travel media (postcards, images, and videos).
+
+-------------------------------------------------------------------------------
+2. COMPLETED STEPS & IMPLEMENTATION MILESTONES
+-------------------------------------------------------------------------------
+
+[Step 1] Core ADK Agent & Model Configuration
+  • Configured root agent with Gemini 2.5 Flash (`gemini-2.5-flash`) via Vertex AI.
+  • Integrated Google Maps Geocoding and Places API tools for real-world location lookup.
+  • Added Open-Meteo weather API (`get_weather`) and currency conversion (`get_exchange_rate`).
+
+[Step 2] A2UI (Agent-to-User Interface) Integration
+  • Built dynamic A2UI schema manager with `A2uiSchemaManager` (version 0.8) and `BasicCatalog`.
+  • Wired `a2ui_callback` as an `after_model_callback` to format travel recommendations,
+    itinerary cards, and media previews directly into native A2UI surface elements.
+
+[Step 3] Long-Term Memory (Vertex AI Memory Bank)
+  • Integrated `VertexAiMemoryBankService` (`PreloadMemoryTool` and `LoadMemoryTool`).
+  • Configured `generate_memories_callback` to persist user travel preferences, favorite
+    destinations, pace, and budget tiers across separate chat sessions.
+
+[Step 4] Cloud Firestore Database Integration
+  • Connected Google Cloud Firestore for persistent destination catalog storage.
+  • Tools implemented:
+      - `search_destinations`: Filter destinations by country, tag, and max daily budget.
+      - `get_destination_details`: Retrieve detailed destination highlights and activities.
+      - `add_destination`: Allow users to save custom destinations to Firestore.
+
+[Step 5] Generative Image & Video Media Tools
+  • `generate_destination_image` / `generate_travel_postcard`: Uses `gemini-3.1-flash-lite-image`
+    in the global region to produce high-resolution travel artwork and postcards.
+  • `generate_destination_video`: Uses Google's `gemini-omni-flash-preview` model in the
+    global region to generate short scenic video clips.
+  • Asset Pipeline: Saves media directly to session artifacts (`tool_context.save_artifact`)
+    and uploads binary bytes to public Cloud Storage (`wanderlust-travel-assets-qwiklabs-gcp-02-c9026da3ba37`).
+
+[Step 6] Code Sandbox Execution Engine
+  • Implemented `AgentEngineSandboxCodeExecutor` for `calculate_itinerary_budget`.
+  • Executes Python budget allocation algorithms safely within an isolated sandbox.
+
+[Step 7] Rebranded Web Chat Frontend & Cloud Run Deployment
+  • Built a minimal FastAPI proxy backend (`frontend/main.py`) communicating with Agent Runtime via A2A protocol.
+  • Rebranded web interface (`frontend/static/index.html`) with Slate Dark theme, Ocean Teal gradients,
+    interactive prompt chips, and custom dialogue layout.
+  • Deployed frontend to Google Cloud Run (`travel-concierge-frontend`) with `roles/aiplatform.user` access.
+
+[Step 8] Demo Recording & Audio Synthesis
+  • Automated live browser interaction recording using Playwright (`record_demo.py`).
+  • Synthesized an upbeat lo-fi background music track (`generate_lofi.py`) featuring `Cmaj7` -> `Am7` -> `Dm7` -> `G7`
+    Rhodes chords, warm lo-fi beat, and vinyl crackle.
+  • Mixed recording with FFmpeg to produce `demo_recording.mp4` and a 12 fps looping `demo.gif`.
+
+[Step 9] Repository Documentation & GitHub Publishing
+  • Authored grounded `README.md` documenting implemented GCP features and local run commands.
+  • Secret-scanned codebase and published to personal GitHub: `aarshvishal108/buildwithgemini-travel-concierge`.
+
+-------------------------------------------------------------------------------
+3. REPOSITORY ACCESS & SECURITY NOTES
+-------------------------------------------------------------------------------
+  • Write Access : Strictly restricted to the owner (`aarshvishal108`). No third party can modify the repo.
+  • Read Access  : Public repository. Anyone can view, clone, or fork the repository.
+  • Ephemeral Links: All temporary lab endpoints (localhost / Cloud Run URLs) removed from documentation.
+
+-------------------------------------------------------------------------------
+Generated At: 2026-09-25
+Challenge    : Build with Gemini — AI Governance & Agentic Applications Track
+===============================================================================
