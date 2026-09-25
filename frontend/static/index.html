@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wanderlust — Travel & Itinerary Concierge</title>
+<!-- Google Fonts & Material Symbols -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+<style>
+  :root {
+    --accent: #0d9488;
+    --accent-hover: #0f766e;
+    --accent-gradient: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+    --bg-main: #0f172a;
+    --bg-chat: #1e293b;
+    --bg-card: #334155;
+    --border-color: #475569;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --user-bubble: linear-gradient(135deg, #0d9488 0%, #0369a1 100%);
+    --agent-bubble: #1e293b;
+    --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* --- Header --- */
+  header {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .brand-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-gradient);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+  }
+
+  .brand-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #38bdf8 0%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .brand-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 9999px;
+    background: rgba(13, 148, 136, 0.15);
+    border: 1px solid rgba(45, 212, 191, 0.3);
+    color: #2dd4bf;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #2dd4bf;
+    box-shadow: 0 0 8px #2dd4bf;
+  }
+
+  /* --- Chat Log Container --- */
+  #log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 1rem;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    scroll-behavior: smooth;
+  }
+
+  .msg-wrapper {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    animation: fadeIn 0.25s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg-wrapper.user {
+    flex-direction: row-reverse;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .msg-wrapper.user .avatar {
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+  }
+
+  .msg-wrapper.agent .avatar {
+    background: var(--accent-gradient);
+  }
+
+  .msg-content {
+    max-width: 82%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .msg-meta {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin-left: 0.3rem;
+  }
+
+  .msg-wrapper.user .msg-meta {
+    text-align: right;
+    margin-right: 0.3rem;
+  }
+
+  .bubble {
+    padding: 0.85rem 1.1rem;
+    border-radius: 16px;
+    background-color: var(--bg-chat);
+    border: 1px solid var(--border-color);
+    line-height: 1.5;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .msg-wrapper.user .bubble {
+    background: var(--user-bubble);
+    color: #ffffff;
+    border: none;
+    border-bottom-right-radius: 4px;
+  }
+
+  .msg-wrapper.agent .bubble {
+    border-bottom-left-radius: 4px;
+  }
+
+  /* Standalone A2UI rich surface */
+  .bubble.rich {
+    background: transparent;
+    border: none;
+    padding: 0;
+    max-width: 100%;
+    white-space: normal;
+    box-shadow: none;
+  }
+
+  /* --- Example Prompts Row --- */
+  .prompts-container {
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0.5rem 1rem 0.25rem 1rem;
+  }
+
+  .prompts-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .prompts-row {
+    display: flex;
+    gap: 0.6rem;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+    scrollbar-width: thin;
+  }
+
+  .prompt-chip {
+    background-color: var(--bg-chat);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.55rem 0.9rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .prompt-chip:hover {
+    background-color: #334155;
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+  }
+
+  /* --- Input Bar --- */
+  .input-area {
+    background: rgba(15, 23, 42, 0.95);
+    border-top: 1px solid var(--border-color);
+    padding: 0.75rem 1rem 1rem 1rem;
+  }
+
+  form {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    background: var(--bg-chat);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 0.4rem 0.4rem 0.4rem 1rem;
+    transition: border-color 0.2s ease;
+  }
+
+  form:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.25);
+  }
+
+  input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+
+  input::placeholder {
+    color: var(--text-secondary);
+  }
+
+  button {
+    padding: 0.65rem 1.25rem;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent-gradient);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  button:hover {
+    opacity: 0.92;
+    transform: scale(1.02);
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  /* --- A2UI component styles --- */
+  .a2card {
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.2rem;
+    background: #1e293b;
+    box-shadow: var(--shadow-lg);
+    max-width: 100%;
+  }
+
+  .a2card + .a2card, .a2col > .a2card { margin-top: 0.8rem; }
+  .a2col { display: flex; flex-direction: column; gap: 0.6rem; }
+  .a2row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+  .a2row.between { justify-content: space-between; }
+  .a2text { margin: 0; line-height: 1.5; color: var(--text-primary); }
+  .a2text.a2-h1 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700; color: #38bdf8; }
+  .a2text.a2-h2 { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 700; color: #2dd4bf; }
+  .a2text.a2-h3 { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 600; color: #f1f5f9; }
+  .a2text.a2-h4 { font-size: 1rem; font-weight: 600; color: #e2e8f0; }
+  .a2text.a2-caption { font-size: 0.85rem; color: var(--text-secondary); }
+  .a2divider { border: none; border-top: 1px solid var(--border-color); margin: 0.6rem 0; width: 100%; }
+  .a2img { max-width: 100%; border-radius: 12px; display: block; border: 1px solid var(--border-color); }
+  .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-size: 1.25rem; line-height: 1; vertical-align: middle; color: #2dd4bf; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">✈️</div>
+    <div>
+      <div class="brand-title">Wanderlust</div>
+      <div class="brand-subtitle">Travel & Itinerary Concierge</div>
+    </div>
+  </div>
+  <div class="status-badge">
+    <span class="status-dot"></span>
+    <span>AI Concierge Live</span>
+  </div>
+</header>
+
+<div id="log"></div>
+
+<div class="input-area">
+  <div class="prompts-container">
+    <div class="prompts-title">Explore Ideas</div>
+    <div class="prompts-row">
+      <button type="button" class="prompt-chip" onclick="sendPrompt('Suggest top places in Japan for nature and scenery')">
+        <span>📍</span> Nature in Japan
+      </button>
+      <button type="button" class="prompt-chip" onclick="sendPrompt('Generate a scenic travel postcard of Kyoto Bamboo Grove')">
+        <span>🖼️</span> Postcard of Kyoto
+      </button>
+      <button type="button" class="prompt-chip" onclick="sendPrompt('Calculate trip budget for 5 days in Paris for 2 travelers')">
+        <span>💰</span> Paris Trip Budget
+      </button>
+    </div>
+  </div>
+
+  <form id="form">
+    <input id="input" placeholder="Ask Wanderlust to plan your next trip…" autocomplete="off" autofocus>
+    <button type="submit">
+      <span>Send</span>
+      <span class="material-symbols-outlined" style="font-size:1.1rem; color:#fff;">send</span>
+    </button>
+  </form>
+</div>
+
+<script>
+const log = document.getElementById("log");
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+function bubble(who) {
+  const wrapper = el("div", "msg-wrapper " + who);
+  const avatar = el("div", "avatar", who === "user" ? "👤" : "✈️");
+  const content = el("div", "msg-content");
+  const meta = el("div", "msg-meta", who === "user" ? "You" : "Wanderlust Concierge");
+  const b = el("div", "bubble");
+
+  content.appendChild(meta);
+  content.appendChild(b);
+  wrapper.appendChild(avatar);
+  wrapper.appendChild(content);
+  log.appendChild(wrapper);
+  log.scrollTop = log.scrollHeight;
+  return b;
+}
+
+function sendPrompt(text) {
+  input.value = text;
+  form.dispatchEvent(new Event("submit", { cancelable: true }));
+}
+
+/* ----------------------------------------------------------------------------
+ * A2UI mini-renderer (v0.8 Basic Catalog subset).
+ * -------------------------------------------------------------------------- */
+function boundStr(v) {
+  if (v == null) return "";
+  if (typeof v === "string") return v;
+  if (typeof v.literalString === "string") return v.literalString;
+  return "";
+}
+
+function childIds(props) {
+  const ids = [];
+  if (props && typeof props.child === "string") ids.push(props.child);
+  const ch = props && props.children;
+  if (ch && Array.isArray(ch.explicitList)) for (const c of ch.explicitList) if (typeof c === "string") ids.push(c);
+  return ids;
+}
+
+function iconName(n) { return String(n || "").replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/\s+/g, "_").toLowerCase(); }
+
+function buildNode(id, comps, seen) {
+  if (!id || seen.has(id)) return null;
+  seen.add(id);
+  const spec = comps[id];
+  if (!spec || typeof spec !== "object") return null;
+  const type = Object.keys(spec)[0];
+  const props = spec[type] || {};
+  const kids = () => childIds(props).map(cid => buildNode(cid, comps, seen)).filter(Boolean);
+
+  switch (type) {
+    case "Card": {
+      const d = el("div", "a2card"); kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Column":
+    case "List": {
+      const horizontal = type === "List" && props.direction === "horizontal";
+      const d = el("div", horizontal ? "a2row" : "a2col"); kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Row": {
+      const d = el("div", "a2row" + (props.distribution === "spaceBetween" ? " between" : ""));
+      kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Text": {
+      const t = el("div", "a2text");
+      const hint = String(props.usageHint || "body").toLowerCase();
+      if (["h1", "h2", "h3", "h4", "h5", "h6"].includes(hint)) t.classList.add("a2-" + hint);
+      else if (hint === "caption") t.classList.add("a2-caption");
+      t.textContent = boundStr(props.text);
+      return t;
+    }
+    case "Divider":
+      return el("hr", "a2divider");
+    case "Image": {
+      const src = boundStr(props.url || props.src);
+      if (!/^https?:\/\//i.test(src)) return null;
+      const img = el("img", "a2img"); img.src = src; img.alt = boundStr(props.alt) || ""; return img;
+    }
+    case "Icon": {
+      const s = el("span", "material-symbols-outlined"); s.textContent = iconName(boundStr(props.name) || props.name); return s;
+    }
+    default:
+      return null;
+  }
+}
+
+function renderSurface(messages, container) {
+  const comps = {};
+  const roots = [];
+  for (const m of messages) {
+    if (m.beginRendering && typeof m.beginRendering.root === "string") roots.push(m.beginRendering.root);
+    const su = m.surfaceUpdate;
+    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.id && c.component) comps[c.id] = c.component;
+  }
+  let rootIds = roots.filter(r => comps[r]);
+  if (rootIds.length === 0) {
+    const referenced = new Set();
+    for (const id in comps) { const spec = comps[id]; childIds(spec[Object.keys(spec)[0]] || {}).forEach(c => referenced.add(c)); }
+    rootIds = Object.keys(comps).filter(id => !referenced.has(id));
+  }
+  let drew = false;
+  for (const rid of rootIds) { const node = buildNode(rid, comps, new Set()); if (node) { container.appendChild(node); drew = true; } }
+  return drew;
+}
+
+function flattenText(messages) {
+  const out = [];
+  for (const m of messages) {
+    const su = m.surfaceUpdate;
+    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.component && c.component.Text) out.push(boundStr(c.component.Text.text));
+  }
+  return out.join("\n").trim();
+}
+
+function renderReply(b, parts) {
+  b.textContent = "";
+  const texts = parts.filter(p => p && (p.kind === "text" || (!p.kind && p.text))).map(p => p.text || "");
+  const a2ui = parts.filter(p => p && p.kind === "a2ui" && p.data).map(p => p.data);
+
+  const textStr = texts.join("\n").trim();
+  if (textStr) b.appendChild(el("div", null, textStr));
+
+  if (a2ui.length) {
+    b.classList.add("rich");
+    if (!renderSurface(a2ui, b)) b.appendChild(el("div", null, flattenText(a2ui) || "(no card content)"));
+  }
+  if (!b.childNodes.length) b.textContent = "(no response)";
+  log.scrollTop = log.scrollHeight;
+}
+
+form.addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+  bubble("user").textContent = text;
+  input.value = "";
+  const b = bubble("agent"); b.textContent = "…";
+  try {
+    const res = await fetch("/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text }) });
+    const raw = await res.text();
+    let data;
+    try { data = JSON.parse(raw); }
+    catch { throw new Error(`Server returned non-JSON (HTTP ${res.status}). ${raw.slice(0, 300)}`); }
+    renderReply(b, data.parts || []);
+  } catch (e) {
+    b.textContent = "Error: " + e.message;
+  }
+});
+
+// Welcome message on load
+window.addEventListener("DOMContentLoaded", () => {
+  const b = bubble("agent");
+  b.textContent = "Welcome to Wanderlust! ✈️ I am your personal Travel & Itinerary Concierge. Ask me for destination recommendations, weather forecasts, budget estimations, or travel artwork!";
+});
+</script>
+</body>
+</html>
