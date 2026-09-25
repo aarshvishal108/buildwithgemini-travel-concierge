@@ -72,7 +72,42 @@ personalized generative travel media (postcards, images, and videos).
   • Secret-scanned codebase and published to personal GitHub: `aarshvishal108/buildwithgemini-travel-concierge`.
 
 -------------------------------------------------------------------------------
-3. REPOSITORY ACCESS & SECURITY NOTES
+3. COMPLETE AGENT TOOL REGISTRY (14 TOOLS)
+-------------------------------------------------------------------------------
+1.  PreloadMemoryTool        : Preloads relevant user memories at session start.
+2.  LoadMemoryTool           : Dynamically queries long-term Memory Bank.
+3.  generate_destination_image: Generates destination photos via Gemini 3.1 Flash Lite.
+4.  generate_destination_video: Generates 720p scenic clips via Gemini Omni Flash Preview.
+5.  generate_travel_postcard : Creates styled postcard art with GCS upload.
+6.  geocode_address          : Converts location names to Lat/Lng coordinates via Maps API.
+7.  find_nearby_places       : Searches nearby attractions, hotels & dining via Places API.
+8.  get_exchange_rate        : Fetches live currency exchange rates.
+9.  calculate_itinerary_budget: Runs Python budget calculations in Code Executor Sandbox.
+10. search_destinations      : Queries Firestore database by country, tag, and price.
+11. get_destination_details  : Fetches rich destination metadata from Firestore.
+12. add_destination          : Inserts custom user-submitted destinations into Firestore.
+13. get_weather              : Fetches live weather forecasts via Open-Meteo.
+14. get_current_time         : Returns current local timestamps for any timezone.
+
+-------------------------------------------------------------------------------
+4. INFRASTRUCTURE & IAM ROLES CONFIGURATION
+-------------------------------------------------------------------------------
+• Agent Runtime Service Account : service-113901312269@gcp-sa-aiplatform-re.iam.gserviceaccount.com
+  - Granted `roles/datastore.user` (Firestore read/write)
+  - Granted `roles/storage.objectAdmin` (Public Storage Bucket upload)
+• Cloud Run Compute Service Account: 113901312269-compute@developer.gserviceaccount.com
+  - Granted `roles/aiplatform.user` (Invoking deployed Agent Runtime API)
+
+-------------------------------------------------------------------------------
+5. HELPER SCRIPTS & AUTOMATION UTILITIES IN REPO
+-------------------------------------------------------------------------------
+• `seed_firestore.py`  : Populates Firestore database with initial destination catalog.
+• `generate_lofi.py`   : Pure-Python DSP synthesizer generating upbeat 84 BPM lo-fi tracks.
+• `record_demo.py`     : Playwright + FFmpeg script for automated UI demo video capture.
+• `frontend/main.py`   : FastAPI proxy supporting A2A streaming & response parsing.
+
+-------------------------------------------------------------------------------
+6. REPOSITORY ACCESS & SECURITY NOTES
 -------------------------------------------------------------------------------
   • Write Access : Strictly restricted to the owner (`aarshvishal108`). No third party can modify the repo.
   • Read Access  : Public repository. Anyone can view, clone, or fork the repository.
